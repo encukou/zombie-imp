@@ -8,7 +8,7 @@ Don't use this, it'll probably trick and bite you.
 
 # Usage
 
-Can be summoned by `import zombie_imp`
+Can be summoned by `import zombie_imp`.
 
 On Python versions where `imp` was banished, reanimate it using `import imp`.
 It promises (with a sneer) to be the same as before.
