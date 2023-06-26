@@ -28,9 +28,8 @@ import tokenize
 import types
 import warnings
 
-warnings.warn("the imp module is deprecated in favour of importlib and slated "
-              "for removal in Python 3.12; "
-              "see the module's documentation for alternative uses",
+warnings.warn("the imp module was removed in favour of importlib. "
+              "Someone brought it back, but it's not a good idea to use it.",
               DeprecationWarning, stacklevel=2)
 
 # DEPRECATED
