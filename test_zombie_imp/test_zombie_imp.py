@@ -5,6 +5,7 @@ import os
 import os.path
 import py_compile
 import sys
+import test
 from test import support
 from test.support import import_helper
 from test.support import os_helper
@@ -12,8 +13,10 @@ from test.support import script_helper
 from test.support import warnings_helper
 import unittest
 import warnings
-import zombie_imp as imp
+import zombie_imp as imp  #!! this should be the only difference between test_imp and test_zombie_imp
 import _imp
+
+orig__file__ = os.path.join(test.__path__[0], os.path.split(__file__)[-1])
 
 
 OS_PATH_NAME = os.path.__name__
@@ -74,7 +77,7 @@ class ImportTests(unittest.TestCase):
             with imp.find_module('module_' + mod, self.test_path)[0] as fd:
                 self.assertEqual(fd.encoding, encoding)
 
-        path = [os.path.dirname(__file__)]
+        path = [os.path.dirname(orig__file__)]
         with self.assertRaises(SyntaxError):
             imp.find_module('badsyntax_pep3120', path)
 
@@ -199,7 +202,7 @@ class ImportTests(unittest.TestCase):
             os_helper.rmtree('__pycache__')
 
     def test_issue9319(self):
-        path = os.path.dirname(__file__)
+        path = os.path.dirname(orig__file__)
         self.assertRaises(SyntaxError,
                           imp.find_module, "badsyntax_pep3120", [path])
 
@@ -278,19 +281,18 @@ class ImportTests(unittest.TestCase):
 
     @requires_load_dynamic
     def test_issue24748_load_module_skips_sys_modules_check(self):
-        name = 'test.imp_dummy'
+        name = 'x'
         try:
             del sys.modules[name]
         except KeyError:
             pass
         try:
-            module = importlib.import_module(name)
             spec = importlib.util.find_spec('_testmultiphase')
             module = imp.load_dynamic(name, spec.origin)
             self.assertEqual(module.__name__, name)
             self.assertEqual(module.__spec__.name, name)
             self.assertEqual(module.__spec__.origin, spec.origin)
-            self.assertRaises(AttributeError, getattr, module, 'dummy_name')
+            self.assertRaises(AttributeError, getattr, module, 'x')
             self.assertEqual(module.int_const, 1969)
             self.assertIs(sys.modules[name], module)
         finally:
@@ -322,7 +324,7 @@ class ImportTests(unittest.TestCase):
         mod = type(sys.modules[__name__])(modname)
         with support.swap_item(sys.modules, modname, mod):
             with self.assertRaisesRegex(ValueError, 'embedded null'):
-                imp.load_source(modname, __file__ + "\0")
+                imp.load_source(modname, orig__file__ + "\0")
 
     @support.cpython_only
     def test_issue31315(self):
@@ -389,8 +391,9 @@ class ImportTests(unittest.TestCase):
             def __init__(self, name):
                 self.name = self
         spec = FakeSpec("time")
-        with self.assertRaises(TypeError):
-            create_builtin(spec)
+        if sys.version_info >= (3, 12):
+            with self.assertRaises(TypeError):
+                create_builtin(spec)
 
         class FakeSpec2:
             name = [1, 2, 3, 4]
