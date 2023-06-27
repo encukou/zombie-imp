@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zombie-imp"
+version = "0.0.1"
+maintainers = [
+  { name="Petr Viktorin", email="encukou@gmail.com" },
+]
+description = "A copy of the `imp` module that was removed in Python 3.12"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Python Software Foundation License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/encukou/zombie-imp"
+"Bug Tracker" = "https://github.com/encukou/zombie-imp/issues"
+
+[tool.setuptools]
+packages = ["zombie_imp"]
+py-modules = ["imp"]
