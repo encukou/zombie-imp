@@ -5,13 +5,15 @@ import unittest
 from pathlib import Path
 import difflib
 import collections
+from contextlib import ExitStack
 
 
 class FilesMatchTests(unittest.TestCase):
     def test_tests_same(self):
-        with (Path(__file__).parent.joinpath('test_imp.py').open() as t_imp,
-            Path(__file__).parent.joinpath('test_zombie_imp.py').open() as t_z_imp,
-        ):
+        with ExitStack() as cm:
+            t_imp = cm.enter_context(Path(__file__).parent.joinpath('test_imp.py').open())
+            t_z_imp = cm.enter_context(Path(__file__).parent.joinpath('test_zombie_imp.py').open())
+
             diff_lines = list(difflib.unified_diff(list(t_imp), list(t_z_imp)))
             prefix_counts = collections.Counter(line[:1] for line in diff_lines)
             try:

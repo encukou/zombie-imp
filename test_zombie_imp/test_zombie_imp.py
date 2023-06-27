@@ -7,10 +7,19 @@ import py_compile
 import sys
 import test
 from test import support
-from test.support import import_helper
-from test.support import os_helper
+try:
+    from test.support import import_helper
+except ImportError:
+    from test import support as import_helper
+try:
+    from test.support import os_helper
+except ImportError:
+    from test import support as os_helper
 from test.support import script_helper
-from test.support import warnings_helper
+try:
+    from test.support import warnings_helper
+except ImportError:
+    from test import support as warnings_helper
 import unittest
 import warnings
 import zombie_imp as imp  #!! this should be the only difference between test_imp and test_zombie_imp
@@ -337,6 +346,7 @@ class ImportTests(unittest.TestCase):
         with self.assertRaises(TypeError):
             create_dynamic(BadSpec())
 
+    @unittest.skipIf(sys.version_info < (3, 8), "missing bug fix")
     def test_issue_35321(self):
         # Both _frozen_importlib and _frozen_importlib_external
         # should have a spec origin of "frozen" and
@@ -349,8 +359,12 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(_frozen_importlib.__spec__.origin, "frozen")
 
     def test_source_hash(self):
-        self.assertEqual(_imp.source_hash(42, b'hi'), b'\xfb\xd9G\x05\xaf$\x9b~')
-        self.assertEqual(_imp.source_hash(43, b'hi'), b'\xd0/\x87C\xccC\xff\xe2')
+        if sys.version_info < (3, 11):
+            self.assertEqual(_imp.source_hash(42, b'hi'), b'\xc6\xe7Z\r\x03:}\xab')
+            self.assertEqual(_imp.source_hash(43, b'hi'), b'\x85\x9765\xf8\x9a\x8b9')
+        else:
+            self.assertEqual(_imp.source_hash(42, b'hi'), b'\xfb\xd9G\x05\xaf$\x9b~')
+            self.assertEqual(_imp.source_hash(43, b'hi'), b'\xd0/\x87C\xccC\xff\xe2')
 
     def test_pyc_invalidation_mode_from_cmdline(self):
         cases = [
@@ -418,6 +432,7 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(bltin, builtins)
 
     @support.cpython_only
+    @unittest.skipIf(sys.version_info < (3, 11), "missing bug fix")
     def test_create_builtin_subinterp(self):
         # gh-99578: create_builtin() behavior changes after the creation of the
         # first sub-interpreter. Test both code paths, before and after the

@@ -1,10 +1,15 @@
 import unittest
 import warnings
 from pathlib import Path
-from test.support.import_helper import CleanImport
+try:
+    from test.support.import_helper import CleanImport
+except ImportError:
+    from test.support import CleanImport
 import sys
-
-from test.support.warnings_helper import check_warnings
+try:
+    from test.support.warnings_helper import check_warnings
+except ImportError:
+    from test.support import check_warnings
 
 from  zombie_imp import pkgutil
 
