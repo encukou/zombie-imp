@@ -25,8 +25,6 @@ import warnings
 import zombie_imp as imp  #!! this should be the only difference between test_imp and test_zombie_imp
 import _imp
 
-orig__file__ = os.path.join(test.__path__[0], os.path.split(__file__)[-1])
-
 
 OS_PATH_NAME = os.path.__name__
 
@@ -86,7 +84,7 @@ class ImportTests(unittest.TestCase):
             with imp.find_module('module_' + mod, self.test_path)[0] as fd:
                 self.assertEqual(fd.encoding, encoding)
 
-        path = [os.path.dirname(orig__file__)]
+        path = [os.path.dirname(__file__)]
         with self.assertRaises(SyntaxError):
             imp.find_module('badsyntax_pep3120', path)
 
@@ -211,7 +209,7 @@ class ImportTests(unittest.TestCase):
             os_helper.rmtree('__pycache__')
 
     def test_issue9319(self):
-        path = os.path.dirname(orig__file__)
+        path = os.path.dirname(__file__)
         self.assertRaises(SyntaxError,
                           imp.find_module, "badsyntax_pep3120", [path])
 
@@ -333,7 +331,7 @@ class ImportTests(unittest.TestCase):
         mod = type(sys.modules[__name__])(modname)
         with support.swap_item(sys.modules, modname, mod):
             with self.assertRaisesRegex(ValueError, 'embedded null'):
-                imp.load_source(modname, orig__file__ + "\0")
+                imp.load_source(modname, __file__ + "\0")
 
     @support.cpython_only
     def test_issue31315(self):
