@@ -1,6 +1,6 @@
 # zombie-imp
 
-~~A particularly mischevious act of necromancy. That is,~~
+~~A particularly mischievous act of necromancy. That is,~~
 A copy of the `imp` module that was removed in Python 3.12.
 
 Don't use this, it'll probably trick and bite you.
