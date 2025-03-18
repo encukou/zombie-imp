@@ -20,7 +20,7 @@ except ImportError:
     # Platform doesn't support dynamic loading.
     create_dynamic = None
 
-from importlib._bootstrap import _ERR_MSG, _exec, _load, _builtin_from_name
+from importlib._bootstrap import _ERR_MSG_PREFIX, _exec, _load, _builtin_from_name
 from importlib._bootstrap_external import SourcelessFileLoader
 
 from importlib import machinery
@@ -297,7 +297,7 @@ def find_module(name, path=None):
             continue
         break  # Break out of outer loop when breaking out of inner loop.
     else:
-        raise ImportError(_ERR_MSG.format(name), name=name)
+        raise ImportError(_ERR_MSG_PREFIX + repr(name), name=name)
 
     encoding = None
     if 'b' not in mode:
