@@ -1,3 +1,7 @@
+## 0.0.3
+
+- Compatibility with Python 3.14a6
+
 ## 0.0.2
 
 - Compatibility with Python 3.7
