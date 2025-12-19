@@ -87,9 +87,12 @@ def cache_from_source(path, debug_override=None):
     If sys.implementation.cache_tag is None then NotImplementedError is raised.
 
     """
-    with warnings.catch_warnings():
-        warnings.simplefilter('ignore')
-        return util.cache_from_source(path, debug_override)
+    # Convert debug_override to optimization,
+    # see https://github.com/python/cpython/commit/dac4589726
+    optimization = None
+    if debug_override is not None:
+        optimization = '' if debug_override else 1
+    return util.cache_from_source(path, optimization=optimization)
 
 
 def source_from_cache(path):
